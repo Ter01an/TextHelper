@@ -58,7 +58,7 @@ class Converter:
                     if position_html == -1:
                         position_html = temp
                     else:
-                        past = ""
+                        past = token.text
                         if words[i] != token.text:
                             if debug:
                                 past = "<span style='background:yellow;mso-highlight:yellow'>" + words[i] + "</span>"
