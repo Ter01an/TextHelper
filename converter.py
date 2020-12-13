@@ -7,6 +7,7 @@ from natasha import (
     Doc
 )
 from inc import resource_path
+from pprint import pprint
 
 
 class Converter:
@@ -57,17 +58,19 @@ class Converter:
                     if position_html == -1:
                         position_html = temp
                     else:
+                        past = ""
                         if words[i] != token.text:
                             if debug:
-                                after = "<span style='background:yellow;mso-highlight:yellow'>" + words[
-                                    i] + "</span>" + html_body[position_html + len(token.text):]
+                                past = "<span style='background:yellow;mso-highlight:yellow'>" + words[i] + "</span>"
                             else:
-                                after = words[i] + html_body[position_html + len(token.text):]
+                                past = words[i]
+
+                            after = past + html_body[position_html + len(token.text):]
                         else:
                             after = html_body[position_html:]
 
                         if words[i] != '':
-                            position_html = position_html + len(token.text)
+                            position_html = position_html + len(past)
 
                         html_body = before + after
 
@@ -230,6 +233,12 @@ class Converter:
                     morphs = self.morph.parse(token.text)
                     morph = morphs[0]
 
+                    if not morph.tag.person:
+                        for m in morphs:
+                            if "Name" in m.tag:
+                                morph = m
+                                break
+
                     if morph.tag.person == '1per' and morph.tag.case == 'nomn':
                         firstPerson += 1
 
@@ -329,12 +338,20 @@ class Converter:
             'я': 'он',
             'мы': 'они',
             'ко мне': 'к нему',
+            'во мне': 'в нём',
             'к нам': 'к ним',
             'для меня': 'для него',
+            'от меня': 'для него',
+            'за меня': 'за него',
             'за мной': 'за ним',
             'у меня': 'у него',
+            'у нас': 'у них',
+            'из нас': 'из них',
+            'до нас': 'до них',
+            'от нас': 'от них',
             'при мне': 'при нём',
             'на меня': 'на него',
+            'со мной': 'с ним',
             'мне': 'ему',
             'наши': 'их',
             'меня': 'его',
@@ -350,12 +367,20 @@ class Converter:
             'я': 'она',
             'мы': 'они',
             'ко мне': 'к ней',
+            'во мне': 'в ней',
             'к нам': 'к ним',
             'для меня': 'для неё',
+            'от меня': 'для неё',
+            'за меня': 'за неё',
             'за мной': 'за ней',
             'у меня': 'у нее',
+            'у нас': 'у них',
+            'из нас': 'из них',
+            'до нас': 'до них',
+            'от нас': 'от них',
             'при мне': 'при ней',
             'на меня': 'на неё',
+            'со мной': 'с ней',
             'мне': 'ей',
             'наши': 'их',
             'меня': 'её',

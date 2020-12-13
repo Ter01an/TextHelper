@@ -53,7 +53,10 @@ class Options(wx.Dialog):
         replace_lbl = wx.StaticText(self, label="Обозначение лица:")
         replace_sizer.Add(replace_lbl, 0, wx.ALL | wx.CENTER, 5)
 
-        self.replace = wx.TextCtrl(self, value="Потерпевший")
+        # self.replace = wx.TextCtrl(self, value="Потерпевший")
+        # replace_sizer.Add(self.replace, 0, wx.ALL, 5)
+
+        self.replace = wx.ComboBox(self, value="Потерпевший", choices=["Потерпевший", "Свидетель", "Обвиняемый", "Подозреваемый"])
         replace_sizer.Add(self.replace, 0, wx.ALL, 5)
 
         self.btnAccept = wx.Button(self, label="Применить")
