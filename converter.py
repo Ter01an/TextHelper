@@ -22,6 +22,8 @@ class Converter:
         self.syntax_parser = NewsSyntaxParser(self.emb)
         self.morph = pymorphy2.MorphAnalyzer(lang='ru', path=resource_path('data/'))
 
+        self.stop = False
+
     def Process(self, buffer, debug=False):
         text = buffer[0]
         html = buffer[1]
@@ -156,18 +158,20 @@ class Converter:
 
             word = self.pronoun(token.text, sent_gender)
             if token.text in ['"', '«']:
-                stop = True
+                # stop = True
+                self.stop = True
 
             if token.text in ['"', '»']:
-                stop = False
+                # stop = False
+                self.stop = False
 
-            if not stop and morph.tag.person == '1per' and (morph.tag.POS in ['VERB', 'NPRO']):
+            # if not stop and morph.tag.person == '1per' and (morph.tag.POS in ['VERB', 'NPRO']):
+            if not self.stop and morph.tag.person == '1per' and (morph.tag.POS in ['VERB', 'NPRO']):
                 inflect = morph.inflect({'3per'})
-
                 prep = False
 
                 if inflect:
-                    word = inflect.word
+                    word = self.exceptions(inflect.word)
                 else:
                     if i - 1 >= 0:
                         text_prev = sent.tokens[i - 1].text
@@ -331,6 +335,17 @@ class Converter:
             genders += self.GenderSent(sent)
 
         return self.GenderMost(genders)
+
+    @staticmethod
+    def exceptions(word):
+        exceptions_list = {
+            "отметит": "отмечает"
+        }
+        if word in exceptions_list:
+            return exceptions_list[word]
+        else:
+            return word
+
 
     @staticmethod
     def pronoun(word, gender):
